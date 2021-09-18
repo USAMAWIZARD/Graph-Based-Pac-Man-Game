@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./js/pixi.min.js"></script>
+    <script src="./js/bump.js"></script>
+</head>
+<body>
+    <script>
+    let app = new PIXI.Application({ width: window.innerWidth, height: window.innerHeight });
+    document.body.appendChild(app.view);
+    let GameMap = PIXI.Sprite.from('./assets/map.png');
+    GameMap.x=((window.innerWidth/2)-GameMap.texture.width)-900
+    scalefactor=3.5
+    
+    GameMap.scale.x+=scalefactor
+    GameMap.scale.y+=scalefactor
+    app.stage.addChild(GameMap)
+
+    window.addEventListener('resize', resize);
+    // Resize function window
+    function resize() {
+      // Resize the renderer
+      app.renderer.resize(window.innerWidth, window.innerHeight);
+    }
+    </script>
+</body>
+</html>
