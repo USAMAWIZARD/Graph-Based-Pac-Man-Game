@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,25 +8,60 @@
     <title>Document</title>
     <script src="./js/pixi.min.js"></script>
     <script src="./js/bump.js"></script>
+    <style>
+        html {
+            overflow: scroll;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar {
+            width: 0;
+            /* Remove scrollbar space */
+            background: transparent;
+            /* Optional: just make scrollbar invisible */
+        }
+
+        /* Optional: show position indicator in red */
+        ::-webkit-scrollbar-thumb {
+            background: #FF0000;
+        }
+    </style>
 </head>
+
 <body>
     <script>
-    let app = new PIXI.Application({ width: window.innerWidth, height: window.innerHeight });
-    document.body.appendChild(app.view);
-    let GameMap = PIXI.Sprite.from('./assets/map.png');
-    GameMap.x=((window.innerWidth/2)-GameMap.texture.width)-900
-    scalefactor=3.5
+        let app = new PIXI.Application({ width: window.innerWidth, height: window.innerHeight });
+        document.body.appendChild(app.view);
+        let GameContainer = new PIXI.Container();
     
-    GameMap.scale.x+=scalefactor
-    GameMap.scale.y+=scalefactor
-    app.stage.addChild(GameMap)
+        const s = PIXI.Loader.shared.add("image", "/assets/map.png");
+        s.load(() => {
+            GameMap = new PIXI.Sprite(PIXI.Loader.shared.resources.image.texture);
+            GameMap.x =(window.innerWidth/2 )-GameMap.texture.width 
 
-    window.addEventListener('resize', resize);
-    // Resize function window
-    function resize() {
-      // Resize the renderer
-      app.renderer.resize(window.innerWidth, window.innerHeight);
-    }
+            scalefactorx = window.innerHeight / GameMap.texture.height;
+            scalefactory = window.innerHeight / GameMap.texture.height;
+            console.log(window.innerHeight, GameMap.texture.height)
+            //scalefactorx=2.5
+
+            //scalefactory=2.5
+            console.log(scalefactory)
+            GameMap.scale.x += parseFloat(scalefactorx.toFixed(2));
+            GameMap.scale.y += parseFloat(scalefactory.toFixed(2));
+            
+            GameContainer.addChild(GameMap)
+            app.stage.addChild(GameContainer)
+
+        })
+
+
+        window.addEventListener('resize', resize);
+        // Resize function window
+        function resize() {
+            // Resize the renderer
+            app.renderer.resize(window.innerWidth, window.innerHeight);
+        }
     </script>
 </body>
+
 </html>
