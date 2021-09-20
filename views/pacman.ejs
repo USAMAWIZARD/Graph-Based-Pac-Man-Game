@@ -33,28 +33,62 @@
         let app = new PIXI.Application({ width: window.innerWidth, height: window.innerHeight });
         document.body.appendChild(app.view);
         let GameContainer = new PIXI.Container();
-    
-        const s = PIXI.Loader.shared.add("image", "/assets/map.png");
+        PacManRight = []
+        PacManLeft = []
+        PacManUp = []
+        PacManDown = []
+        const s = PIXI.Loader.shared.add("Gamemap", "/assets/map.png")
+            .add("PacmanRight_1", "./assets/pacman-right/1.png")
+            .add("PacmanRight_2", "./assets/pacman-right/2.png")
+            .add("PacmanRight_3", "./assets/pacman-right/3.png")
+            .add("PacmanLeft_1", "./assets/pacman-left/1.png")
+            .add("PacmanLeft_2", "./assets/pacman-left/2.png")
+            .add("PacmanLeft_3", "./assets/pacman-left/3.png")
+            .add("PacmanUp_1", "./assets/pacman-up/1.png")
+            .add("PacmanUp_2", "./assets/pacman-up/2.png")
+            .add("PacmanUp_3", "./assets/pacman-up/3.png")
+            .add("PacmanDown_1", "./assets/pacman-down/1.png")
+            .add("PacmanDown_2", "./assets/pacman-down/2.png")
+            .add("PacmanDown_3", "./assets/pacman-down/3.png")
+
         s.load(() => {
-            GameMap = new PIXI.Sprite(PIXI.Loader.shared.resources.image.texture);
-            GameMap.x =(window.innerWidth/2 )-GameMap.texture.width 
+        GameMap = new PIXI.Sprite(PIXI.Loader.shared.resources.Gamemap.texture);
+        scalefactorx = window.innerHeight / GameMap.texture.height;
+        scalefactory = window.innerHeight / GameMap.texture.height;
+        scalefactorx = parseFloat(scalefactorx.toFixed(2));
+        scalefactory = parseFloat(scalefactory.toFixed(2)); 
+        PacManRight.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanRight_2.texture));
+        PacManRight.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanRight_3.texture));
+        PacManRight.push(new PIXI.Sprite(PIXI.Loader.shared.resources.Gamemap.texture));
+        PacManLeft.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanLeft_1.texture));
+        PacManLeft.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanLeft_2.texture));
+        PacManLeft.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanLeft_3.texture));
+        PacManUp.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanUp_1.texture));
+        PacManUp.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanUp_2.texture));
+        PacManUp.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanUp_3.texture));
+        PacManDown.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanDown_1.texture));
+        PacManDown.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanDown_2.texture));
+        PacManDown.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanDown_3.texture));
+        [PacManDown,PacManLeft,PacManRight,PacManUp].forEach((eachSpriteArray)=>{
+            eachSpriteArray.forEach((eachSprite)=>{
+                eachSprite.scale.x*=scalefactorx
+                eachSprite.scale.y*=scalefactory
+            })
+        })
+            GameMap.scale.x *= scalefactorx
+            GameMap.scale.y *= scalefactory
+            GameMap.x = (window.innerWidth / 2 - (GameMap.texture.width) / 2) / 2
 
-            scalefactorx = window.innerHeight / GameMap.texture.height;
-            scalefactory = window.innerHeight / GameMap.texture.height;
-            console.log(window.innerHeight, GameMap.texture.height)
-            //scalefactorx=2.5
-
-            //scalefactory=2.5
-            console.log(scalefactory)
-            GameMap.scale.x += parseFloat(scalefactorx.toFixed(2));
-            GameMap.scale.y += parseFloat(scalefactory.toFixed(2));
-            
             GameContainer.addChild(GameMap)
             app.stage.addChild(GameContainer)
-
+            app.stage.addChild(PacManRight[0])
         })
 
 
+        app.ticker.add(gameLoop)
+       function gameLoop(delta){
+        
+       }
         window.addEventListener('resize', resize);
         // Resize function window
         function resize() {
