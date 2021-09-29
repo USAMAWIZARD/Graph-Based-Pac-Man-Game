@@ -13,17 +13,18 @@
             overflow: scroll;
             overflow-x: hidden;
         }
+
         canvas {
-        display:block;
+            display: block;
         }
 
         #MYAPP {
-        position: absolute;
-        overflow: hidden;
-        top:0%;
-        left:0%;
-        width: 100%;
-        height: 100%;
+            position: absolute;
+            overflow: hidden;
+            top: 0%;
+            left: 0%;
+            width: 100%;
+            height: 100%;
         }
 
         ::-webkit-scrollbar {
@@ -43,15 +44,19 @@
 <body>
     <div id="MYAPP"></div>
     <script>
-        let app = new PIXI.Application({ width: window.innerWidth, height: window.innerHeight , autoResize: true,resolution:  1 });
+        let app = new PIXI.Application({ width: window.innerWidth, height: window.innerHeight, autoResize: true, resolution: 1 });
         document.body.appendChild(app.view);
         let GameContainer = new PIXI.Container();
-        var Pacman=null
-        PacManDirc="ArrowRight"
+        var Pacman = null
+        PacManDirc = "ArrowRight"
         PacManRight = []
         PacManLeft = []
+        PacManSpeed=3
+        PacManMouthRate_MSec=10
+        xmove=0
+        ymove=0
         PacManUp = []
-        var PacManSpriteObj=null
+        var PacManSpriteObj = null
         PacManDown = []
         const s = PIXI.Loader.shared.add("Gamemap", "/assets/map.png")
             .add("PacmanRight_1", "./assets/pacman-right/1.png")
@@ -66,83 +71,101 @@
             .add("PacmanDown_1", "./assets/pacman-down/1.png")
             .add("PacmanDown_2", "./assets/pacman-down/2.png")
             .add("PacmanDown_3", "./assets/pacman-down/3.png")
-    function resize() {
-        console.log("resize")
-        const parent = app.view.parentNode;
+        function resize() {
+            console.log("resize")
+            const parent = app.view.parentNode;
 
-        app.renderer.resize(parent.clientWidth, parent.clientHeight);
+            app.renderer.resize(parent.clientWidth, parent.clientHeight);
 
-        Pacman.position.set(
-        (GameMap.texture.width-27)*scalefactorx/ 2 ,
-        (GameMap.texture.height+243) *scalefactory/ 2 
-        );
+            Pacman.position.set(
+                (GameMap.texture.width - 27) * scalefactorx / 2,
+                (GameMap.texture.height + 243) * scalefactory / 2
+            );
         }
         s.load(() => {
-        GameMap = new PIXI.Sprite(PIXI.Loader.shared.resources.Gamemap.texture);
-        scalefactorx = window.innerHeight / GameMap.texture.height;
-        scalefactory = window.innerHeight / GameMap.texture.height;
-        scalefactorx = parseFloat(scalefactorx.toFixed(2));
-        scalefactory = parseFloat(scalefactory.toFixed(2)); 
-        Pacman=new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanRight_1.texture)
+            GameMap = new PIXI.Sprite(PIXI.Loader.shared.resources.Gamemap.texture);
+            scalefactorx = window.innerHeight / GameMap.texture.height;
+            scalefactory = window.innerHeight / GameMap.texture.height;
+            scalefactorx = parseFloat(scalefactorx.toFixed(2));
+            scalefactory = parseFloat(scalefactory.toFixed(2));
+            Pacman = new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanRight_1.texture)
 
-        PacManRight.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanRight_1.texture));
-        PacManRight.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanRight_2.texture));
-        PacManRight.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanRight_3.texture));
-        PacManLeft.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanLeft_1.texture));
-        PacManLeft.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanLeft_2.texture));
-        PacManLeft.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanLeft_3.texture));
-        PacManUp.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanUp_1.texture));
-        PacManUp.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanUp_2.texture));
-        PacManUp.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanUp_3.texture));
-        PacManDown.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanDown_1.texture));
-        PacManDown.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanDown_2.texture));
-        PacManDown.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanDown_3.texture));
-        PacManSpriteObj={"Pacman":[Pacman],"ArrowDown":PacManDown,"ArrowLeft":PacManLeft,"ArrowRight":PacManRight,"ArrowUp":PacManUp}
-        Object.values(PacManSpriteObj).forEach((eachSpriteArray)=>{
-            eachSpriteArray.forEach((eachSprite)=>{
-                eachSprite.scale.x*=scalefactorx
-                eachSprite.scale.y*=scalefactory
+            PacManRight.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanRight_1.texture));
+            PacManRight.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanRight_2.texture));
+            PacManRight.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanRight_3.texture));
+            PacManLeft.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanLeft_1.texture));
+            PacManLeft.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanLeft_2.texture));
+            PacManLeft.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanLeft_3.texture));
+            PacManUp.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanUp_1.texture));
+            PacManUp.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanUp_2.texture));
+            PacManUp.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanUp_3.texture));
+            PacManDown.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanDown_1.texture));
+            PacManDown.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanDown_2.texture));
+            PacManDown.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanDown_3.texture));
+            PacManSpriteObj = { "Pacman": [Pacman], "ArrowDown": PacManDown, "ArrowLeft": PacManLeft, "ArrowRight": PacManRight, "ArrowUp": PacManUp }
+            Object.values(PacManSpriteObj).forEach((eachSpriteArray) => {
+                eachSpriteArray.forEach((eachSprite) => {
+                    eachSprite.scale.x *= scalefactorx
+                    eachSprite.scale.y *= scalefactory
+                })
             })
-        })
-            GameMap.scale.x *= scalefactorx 
+            GameMap.scale.x *= scalefactorx
             GameMap.scale.y *= scalefactory
-           // GameMap.x = (window.innerWidth / 2 - (GameMap.texture.width) / 2) / 2
+            // GameMap.x = (window.innerWidth / 2 - (GameMap.texture.width) / 2) / 2
 
             GameContainer.addChild(GameMap)
-            Pacman.x=100
-            Pacman.y=700
-            Pacman.scale.x *=1.8
-            Pacman.scale.y *=1.8
-           // Pacman.anchor.set(12, 10.9);
+            Pacman.x = 100
+            Pacman.y = 700
+            Pacman.scale.x *= 1.8
+            Pacman.scale.y *= 1.8
+            // Pacman.anchor.set(12, 10.9);
             GameContainer.addChild(Pacman)
             app.stage.addChild(GameContainer)
-       
+
             resize();
             app.ticker.add(gameLoop)
-            document.body.onkeydown=(key=>{
-                if (Object.keys(PacManSpriteObj).includes(key.code)){
-                    PacManDirc= key.code
+            document.body.onkeydown = (key => {
+                if (Object.keys(PacManSpriteObj).includes(key.code)) {
+                    PacManDirc = key.code
+                    switch (PacManDirc){
+                    case "ArrowUp":
+                        ymove=-PacManSpeed
+                        xmove=0
+                        break   
+                    case "ArrowDown":
+                        ymove=PacManSpeed
+                        xmove=0
+                        break
+                    case "ArrowRight":
+                        xmove=PacManSpeed
+                        ymove=0
+                        break
+                    case "ArrowLeft":
+                        xmove=-PacManSpeed
+                        ymove=0
+                        break
+                    }
+        
                 }
             })
 
         })
-        timeElapsed=0
-        PacManSkinItrate=0
-        
-       function gameLoop(delta){
-        timeElapsed+=delta
-        if(timeElapsed >8){
-            if(PacManSkinItrate==3)
-                PacManSkinItrate=0
+        timeElapsed = 0
+        PacManSkinItrate = 0
 
-            Pacman.texture= PacManSpriteObj[PacManDirc][PacManSkinItrate].texture
+        function gameLoop(delta) {
+            timeElapsed += delta
+            if (timeElapsed > PacManMouthRate_MSec) {
+                if (PacManSkinItrate == 3)
+                    PacManSkinItrate = 0
+                Pacman.texture = PacManSpriteObj[PacManDirc][PacManSkinItrate].texture
+                PacManSkinItrate += 1
+                timeElapsed = 0
+            }
+            Pacman.x+=xmove
+            Pacman.y+=ymove
 
-
-            PacManSkinItrate+=1
-
-            timeElapsed=0
         }
-       }
 
 
 
