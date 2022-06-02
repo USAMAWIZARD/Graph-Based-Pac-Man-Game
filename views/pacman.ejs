@@ -46,18 +46,27 @@
     <script>
         let app = new PIXI.Application({ width: window.innerWidth, height: window.innerHeight, autoResize: true, resolution: 1 });
         document.body.appendChild(app.view);
+        ctx = app.renderer.context.gl;
+        var mouse = app.renderer.plugins.interaction.mouse.global;
+        MouseX = mouse.x;
+        MouseY = mouse.y;
         let GameContainer = new PIXI.Container();
         var Pacman = null
         PacManDirc = "ArrowRight"
         PacManRight = []
         PacManLeft = []
-        PacManSpeed=3
-        PacManMouthRate_MSec=10
-        xmove=0
-        ymove=0
+        var PixelData, collpixels
+        PacManSpeed = 1// window.innerWidth / 500
+        PacManMouthRate_MSec = 10
+        xmove = 0
+        ymove = 0
         PacManUp = []
         var PacManSpriteObj = null
         PacManDown = []
+        colorline = []
+        Coll2DMapArray = []
+        //448 *576
+
         const s = PIXI.Loader.shared.add("Gamemap", "/assets/map.png")
             .add("PacmanRight_1", "./assets/pacman-right/1.png")
             .add("PacmanRight_2", "./assets/pacman-right/2.png")
@@ -71,6 +80,8 @@
             .add("PacmanDown_1", "./assets/pacman-down/1.png")
             .add("PacmanDown_2", "./assets/pacman-down/2.png")
             .add("PacmanDown_3", "./assets/pacman-down/3.png")
+            .add("CollusionMap", "./assets/CollusionMap.png")
+
         function resize() {
             console.log("resize")
             const parent = app.view.parentNode;
@@ -82,14 +93,16 @@
                 (GameMap.texture.height + 243) * scalefactory / 2
             );
         }
+
         s.load(() => {
             GameMap = new PIXI.Sprite(PIXI.Loader.shared.resources.Gamemap.texture);
+
             scalefactorx = window.innerHeight / GameMap.texture.height;
             scalefactory = window.innerHeight / GameMap.texture.height;
             scalefactorx = parseFloat(scalefactorx.toFixed(2));
             scalefactory = parseFloat(scalefactory.toFixed(2));
             Pacman = new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanRight_1.texture)
-
+            CollusionMap = new PIXI.Sprite(PIXI.Loader.shared.resources.CollusionMap.texture)
             PacManRight.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanRight_1.texture));
             PacManRight.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanRight_2.texture));
             PacManRight.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanRight_3.texture));
@@ -103,70 +116,122 @@
             PacManDown.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanDown_2.texture));
             PacManDown.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanDown_3.texture));
             PacManSpriteObj = { "Pacman": [Pacman], "ArrowDown": PacManDown, "ArrowLeft": PacManLeft, "ArrowRight": PacManRight, "ArrowUp": PacManUp }
+            collpixels = app.renderer.extract.pixels(CollusionMap)
+
+            GameMap.scale.x *= scalefactorx
+            GameMap.scale.y *= scalefactory
+            CollusionMap.scale.x *= scalefactorx
+            CollusionMap.scale.y *= scalefactory
+
+            GameContainer.addChild(CollusionMap)
             Object.values(PacManSpriteObj).forEach((eachSpriteArray) => {
                 eachSpriteArray.forEach((eachSprite) => {
                     eachSprite.scale.x *= scalefactorx
                     eachSprite.scale.y *= scalefactory
                 })
             })
-            GameMap.scale.x *= scalefactorx
-            GameMap.scale.y *= scalefactory
-            // GameMap.x = (window.innerWidth / 2 - (GameMap.texture.width) / 2) / 2
+
+
+            for (i = 0; i < collpixels.length; i += 4) {
+                colorline.push(collpixels[i])
+                if (colorline.length == 448) {
+                    Coll2DMapArray.push(colorline)
+                    colorline = []
+                }
+            }
+            console.log(i)
+            GameMap.x = 0
+            GameMap.y = 0
 
             GameContainer.addChild(GameMap)
             Pacman.x = 100
             Pacman.y = 700
             Pacman.scale.x *= 1.8
             Pacman.scale.y *= 1.8
+            PacmanRadius=parseInt(Pacman.width/2)
             // Pacman.anchor.set(12, 10.9);
             GameContainer.addChild(Pacman)
+            // app.stage.addChild(gr)
+
             app.stage.addChild(GameContainer)
 
             resize();
+            app.stage.addChild(graphic);
+
             app.ticker.add(gameLoop)
             document.body.onkeydown = (key => {
                 if (Object.keys(PacManSpriteObj).includes(key.code)) {
                     PacManDirc = key.code
-                    switch (PacManDirc){
-                    case "ArrowUp":
-                        ymove=-PacManSpeed
-                        xmove=0
-                        break   
-                    case "ArrowDown":
-                        ymove=PacManSpeed
-                        xmove=0
-                        break
-                    case "ArrowRight":
-                        xmove=PacManSpeed
-                        ymove=0
-                        break
-                    case "ArrowLeft":
-                        xmove=-PacManSpeed
-                        ymove=0
-                        break
+                    switch (PacManDirc) {
+                        case "ArrowUp":
+            
+                            ymove = -PacManSpeed
+                            xmove = 0
+                            break
+                        case "ArrowDown":
+                            ymove = PacManSpeed
+                            xmove = 0
+                            break
+                        case "ArrowRight":
+                            xmove = PacManSpeed
+                            ymove = 0
+                            break
+                        case "ArrowLeft":
+                            xmove = -PacManSpeed
+                            ymove = 0
+                            break
                     }
-        
+
                 }
             })
 
         })
+        function pixel(mysprite, x, y) {
+            var pixels = app.renderer.extract.pixels(mysprite);
+            var index = (y * mysprite.width + x) * 4;
+
+            return [pixels[index], pixels[index + 1], pixels[index + 2], pixels[index + 3]]
+        }
+
+
+        let graphic = new PIXI.Graphics();
+        let xp=0,yp=0
         timeElapsed = 0
         PacManSkinItrate = 0
 
         function gameLoop(delta) {
             timeElapsed += delta
-            if (timeElapsed > PacManMouthRate_MSec) {
-                if (PacManSkinItrate == 3)
-                    PacManSkinItrate = 0
-                Pacman.texture = PacManSpriteObj[PacManDirc][PacManSkinItrate].texture
-                PacManSkinItrate += 1
-                timeElapsed = 0
+            //console.log(   Coll2DMapArray[parseInt((Pacman.y+PacmanRadius)/ scalefactory)][parseInt((Pacman.x+PacmanRadius)/scalefactorx)])
+            
+            if (  Coll2DMapArray[parseInt((Pacman.y+PacmanRadius)/ scalefactory)+ymove][parseInt((Pacman.x+PacmanRadius)/scalefactorx)+xmove] ==8 ) {
+    
+                Pacman.x += xmove
+                Pacman.y += ymove
             }
-            Pacman.x+=xmove
-            Pacman.y+=ymove
+                if (timeElapsed > PacManMouthRate_MSec) {
+                    if (PacManSkinItrate == 3)
+                        PacManSkinItrate = 0
+                    Pacman.texture = PacManSpriteObj[PacManDirc][PacManSkinItrate].texture
+                    PacManSkinItrate += 1
+                    timeElapsed = 0
+                }
+
+
+            //Pacman.x = mouse['x']
+            //Pacman.y = mouse['y']
+            //if (mouse.x >0  && Coll2DMapArray[parseInt(mouse.x)][parseInt(mouse.y)]!= 0)
+            //   console.log(Coll2DMapArray[parseInt(mouse.x)][parseInt(mouse.y)])
+
+            if ((mouse.x != xp && mouse.y != yp || mouse.x > 0 )&& mouse.y > 0) {
+              //  console.log(mouse.x/scalefactorx, mouse.y/scalefactory,Coll2DMapArray[parseInt(mouse.y/ scalefactory)][parseInt(mouse.x/scalefactorx)])
+                xp = mouse.x
+                yp = mouse.y
+            }
+            graphic.beginFill(0xffffff);
+            graphic.drawCircle(Pacman.x + Pacman.width / 2, Pacman.y + Pacman.width / 2, 2);
+            graphic.endFill();
 
         }
-
 
 
     </script>
