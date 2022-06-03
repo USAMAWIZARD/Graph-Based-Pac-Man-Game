@@ -56,7 +56,7 @@
         PacManRight = []
         PacManLeft = []
         var PixelData, collpixels
-        PacManSpeed = 1// window.innerWidth / 500
+        PacManSpeed =window.innerWidth / 500
         PacManMouthRate_MSec = 10
         xmove = 0
         ymove = 0
@@ -66,7 +66,7 @@
         colorline = []
         Coll2DMapArray = []
         //448 *576
-
+        var changeXmove = 0, chagneYmove = 0,chagnePacManDirc="ArrowRight"
         const s = PIXI.Loader.shared.add("Gamemap", "/assets/map.png")
             .add("PacmanRight_1", "./assets/pacman-right/1.png")
             .add("PacmanRight_2", "./assets/pacman-right/2.png")
@@ -126,8 +126,8 @@
             GameContainer.addChild(CollusionMap)
             Object.values(PacManSpriteObj).forEach((eachSpriteArray) => {
                 eachSpriteArray.forEach((eachSprite) => {
-                    eachSprite.scale.x *= scalefactorx*2
-                    eachSprite.scale.y *= scalefactory*2
+                    eachSprite.scale.x *= scalefactorx * 2
+                    eachSprite.scale.y *= scalefactory * 2
                     eachSprite.x = 100
                     eachSprite.y = 700
                 })
@@ -148,7 +148,7 @@
             GameContainer.addChild(GameMap)
 
 
-            PacmanRadius=Pacman.width/2
+            PacmanRadius = Pacman.width / 2
             // Pacman.anchor.set(12, 10.9);
             GameContainer.addChild(Pacman)
             // app.stage.addChild(gr)
@@ -164,21 +164,20 @@
                     PacManDirc = key.code
                     switch (PacManDirc) {
                         case "ArrowUp":
-            
-                            ymove = -PacManSpeed
-                            xmove = 0
+                            chagneYmove = -PacManSpeed
+                            changeXmove = 0
                             break
                         case "ArrowDown":
-                            ymove = PacManSpeed
-                            xmove = 0
+                            chagneYmove = PacManSpeed
+                            changeXmove = 0
                             break
                         case "ArrowRight":
-                            xmove = PacManSpeed
-                            ymove = 0
+                            changeXmove = PacManSpeed
+                            chagneYmove = 0
                             break
                         case "ArrowLeft":
-                            xmove = -PacManSpeed
-                            ymove = 0
+                            changeXmove = -PacManSpeed
+                            chagneYmove = 0
                             break
                     }
 
@@ -195,27 +194,36 @@
 
 
         let graphic = new PIXI.Graphics();
-        let xp=0,yp=0
+        let xp = 0, yp = 0
         timeElapsed = 0
         PacManSkinItrate = 0
 
         function gameLoop(delta) {
             timeElapsed += delta
             //console.log(   Coll2DMapArray[parseInt((Pacman.y+PacmanRadius)/ scalefactory)][parseInt((Pacman.x+PacmanRadius)/scalefactorx)])
-            pacmanWay=Coll2DMapArray[parseInt((Pacman.y+PacmanRadius+ymove)/ scalefactory)][parseInt((Pacman.x+PacmanRadius+xmove)/scalefactorx)] 
-            if (pacmanWay !=0) {
-                console.log(Pacman.x,Pacman.y)
+            // check if can change direction or go in same dir 
+            if (chagneYmove != ymove || changeXmove != xmove) {
+                let can_go = Coll2DMapArray[parseInt((Pacman.y + PacmanRadius + (chagneYmove * 20)) / scalefactory)][parseInt((Pacman.x + PacmanRadius + (changeXmove *20)) / scalefactorx)]
+                if (can_go!=0 && can_go<10) {
+                    xmove = changeXmove
+                    ymove = chagneYmove
+                    chagnePacManDirc=PacManDirc
+                }
+            }
+            pacmanWay = Coll2DMapArray[parseInt((Pacman.y + PacmanRadius + (ymove)) / scalefactory)][parseInt((Pacman.x + PacmanRadius + (xmove )) / scalefactorx)]
+
+            if (pacmanWay != 0) {
+                //console.log(Pacman.x, Pacman.y)
                 Pacman.x += xmove
                 Pacman.y += ymove
-
             }
-                if (timeElapsed > PacManMouthRate_MSec) {
-                    if (PacManSkinItrate == 3)
-                        PacManSkinItrate = 0
-                    Pacman.texture = PacManSpriteObj[PacManDirc][PacManSkinItrate].texture
-                    PacManSkinItrate += 1
-                    timeElapsed = 0
-                }
+            if (timeElapsed > PacManMouthRate_MSec) {
+                if (PacManSkinItrate == 3)
+                    PacManSkinItrate = 0
+                Pacman.texture = PacManSpriteObj[chagnePacManDirc][PacManSkinItrate].texture
+                PacManSkinItrate += 1
+                timeElapsed = 0
+            }
 
             graphic.beginFill(0xffffff);
             graphic.drawCircle(Pacman.x + Pacman.width / 2, Pacman.y + Pacman.width / 2, 2);
