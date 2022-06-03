@@ -67,20 +67,20 @@
         Coll2DMapArray = []
         //448 *576
         var changeXmove = 0, chagneYmove = 0,chagnePacManDirc="ArrowRight"
-        const s = PIXI.Loader.shared.add("Gamemap", "/assets/map.png")
-            .add("PacmanRight_1", "./assets/pacman-right/1.png")
-            .add("PacmanRight_2", "./assets/pacman-right/2.png")
-            .add("PacmanRight_3", "./assets/pacman-right/3.png")
-            .add("PacmanLeft_1", "./assets/pacman-left/1.png")
-            .add("PacmanLeft_2", "./assets/pacman-left/2.png")
-            .add("PacmanLeft_3", "./assets/pacman-left/3.png")
-            .add("PacmanUp_1", "./assets/pacman-up/1.png")
-            .add("PacmanUp_2", "./assets/pacman-up/2.png")
-            .add("PacmanUp_3", "./assets/pacman-up/3.png")
-            .add("PacmanDown_1", "./assets/pacman-down/1.png")
-            .add("PacmanDown_2", "./assets/pacman-down/2.png")
-            .add("PacmanDown_3", "./assets/pacman-down/3.png")
-            .add("CollusionMap", "./assets/CollusionMap.png")
+        const s = PIXI.Loader.shared.add("Gamemap", "/assets/Map/map.png")
+            .add("PacmanRight_1", "./assets/Pacman/pacman-right/1.png")
+            .add("PacmanRight_2", "./assets/Pacman/pacman-right/2.png")
+            .add("PacmanRight_3", "./assets/Pacman/pacman-right/3.png")
+            .add("PacmanLeft_1", "./assets/Pacman/pacman-left/1.png")
+            .add("PacmanLeft_2", "./assets/Pacman/pacman-left/2.png")
+            .add("PacmanLeft_3", "./assets/Pacman/pacman-left/3.png")
+            .add("PacmanUp_1", "./assets/Pacman/pacman-up/1.png")
+            .add("PacmanUp_2", "./assets/Pacman/pacman-up/2.png")
+            .add("PacmanUp_3", "./assets/Pacman/pacman-up/3.png")
+            .add("PacmanDown_1", "./assets/Pacman/pacman-down/1.png")
+            .add("PacmanDown_2", "./assets/Pacman/pacman-down/2.png")
+            .add("PacmanDown_3", "./assets/Pacman/pacman-down/3.png")
+            .add("CollusionMap", "./assets/Map/CollusionMap.png")
 
         function resize() {
             console.log("resize")
@@ -203,7 +203,7 @@
             //console.log(   Coll2DMapArray[parseInt((Pacman.y+PacmanRadius)/ scalefactory)][parseInt((Pacman.x+PacmanRadius)/scalefactorx)])
             // check if can change direction or go in same dir 
             if (chagneYmove != ymove || changeXmove != xmove) {
-                let can_go = Coll2DMapArray[parseInt((Pacman.y + PacmanRadius + (chagneYmove * 20)) / scalefactory)][parseInt((Pacman.x + PacmanRadius + (changeXmove *20)) / scalefactorx)]
+                let can_go = Coll2DMapArray[parseInt((Pacman.y + PacmanRadius + (chagneYmove * 10)) / scalefactory)][parseInt((Pacman.x + PacmanRadius + (changeXmove *10)) / scalefactorx)]
                 if (can_go!=0 && can_go<10) {
                     xmove = changeXmove
                     ymove = chagneYmove
