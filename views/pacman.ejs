@@ -126,13 +126,15 @@
             GameContainer.addChild(CollusionMap)
             Object.values(PacManSpriteObj).forEach((eachSpriteArray) => {
                 eachSpriteArray.forEach((eachSprite) => {
-                    eachSprite.scale.x *= scalefactorx
-                    eachSprite.scale.y *= scalefactory
+                    eachSprite.scale.x *= scalefactorx*2
+                    eachSprite.scale.y *= scalefactory*2
+                    eachSprite.x = 100
+                    eachSprite.y = 700
                 })
             })
 
 
-            for (i = 0; i < collpixels.length; i += 4) {
+            for (i = 0; i <= collpixels.length; i += 4) {
                 colorline.push(collpixels[i])
                 if (colorline.length == 448) {
                     Coll2DMapArray.push(colorline)
@@ -144,11 +146,9 @@
             GameMap.y = 0
 
             GameContainer.addChild(GameMap)
-            Pacman.x = 100
-            Pacman.y = 700
-            Pacman.scale.x *= 1.8
-            Pacman.scale.y *= 1.8
-            PacmanRadius=parseInt(Pacman.width/2)
+
+
+            PacmanRadius=Pacman.width/2
             // Pacman.anchor.set(12, 10.9);
             GameContainer.addChild(Pacman)
             // app.stage.addChild(gr)
@@ -202,11 +202,12 @@
         function gameLoop(delta) {
             timeElapsed += delta
             //console.log(   Coll2DMapArray[parseInt((Pacman.y+PacmanRadius)/ scalefactory)][parseInt((Pacman.x+PacmanRadius)/scalefactorx)])
-            
-            if (  Coll2DMapArray[parseInt((Pacman.y+PacmanRadius)/ scalefactory)+ymove][parseInt((Pacman.x+PacmanRadius)/scalefactorx)+xmove] ==8 ) {
-    
+            pacmanWay=Coll2DMapArray[parseInt((Pacman.y+PacmanRadius+ymove)/ scalefactory)][parseInt((Pacman.x+PacmanRadius+xmove)/scalefactorx)] 
+            if (pacmanWay !=0) {
+                console.log(Pacman.x,Pacman.y)
                 Pacman.x += xmove
                 Pacman.y += ymove
+
             }
                 if (timeElapsed > PacManMouthRate_MSec) {
                     if (PacManSkinItrate == 3)
@@ -216,17 +217,6 @@
                     timeElapsed = 0
                 }
 
-
-            //Pacman.x = mouse['x']
-            //Pacman.y = mouse['y']
-            //if (mouse.x >0  && Coll2DMapArray[parseInt(mouse.x)][parseInt(mouse.y)]!= 0)
-            //   console.log(Coll2DMapArray[parseInt(mouse.x)][parseInt(mouse.y)])
-
-            if ((mouse.x != xp && mouse.y != yp || mouse.x > 0 )&& mouse.y > 0) {
-              //  console.log(mouse.x/scalefactorx, mouse.y/scalefactory,Coll2DMapArray[parseInt(mouse.y/ scalefactory)][parseInt(mouse.x/scalefactorx)])
-                xp = mouse.x
-                yp = mouse.y
-            }
             graphic.beginFill(0xffffff);
             graphic.drawCircle(Pacman.x + Pacman.width / 2, Pacman.y + Pacman.width / 2, 2);
             graphic.endFill();
