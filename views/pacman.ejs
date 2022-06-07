@@ -61,7 +61,7 @@
         xmove = 0
         ymove = 0
         PacManUp = []
-        lastcorner=0
+        lastcorner=null
         var PacManSpriteObj = null
         PacManDown = []
         colorline = []
@@ -203,6 +203,7 @@
             // check if can change direction or go in same dir 
             if (chagneYmove != ymove || changeXmove != xmove) {
                 console.log("aya")
+
                 oneymove= Math.sign(chagneYmove)
                 onexmove=Math.sign(changeXmove)
                 for(i=1;i<=parseInt((Pacman.width)/2);i++){
@@ -229,20 +230,24 @@
                 Pacman.y += ymove
             }
             else {
-                
-                oneymove= Math.sign(ymove) *-1
-                onexmove=Math.sign(xmove) *-1
-               // console.log(onexmove,oneymove)
-         
-                while (lastcorner<20 && lastcorner!=0) {
+                console.log(xmove,ymove)
+
+                oneymove= Math.sign(ymove) 
+                onexmove=Math.sign(xmove) 
+                console.log(onexmove,oneymove)
+
+                while (lastcorner!=0 && lastcorner<16) {
+                    lastcorner = Coll2DMapArray[parseInt((Pacman.y+oneymove + PacmanRadius ) / scalefactory)][parseInt((Pacman.x +onexmove+ PacmanRadius ) / scalefactorx)]
+                    if (lastcorner!=0){
                     Pacman.x += onexmove
                     Pacman.y += oneymove
-                    lastcorner = Coll2DMapArray[parseInt((Pacman.y + PacmanRadius ) / scalefactory)][parseInt((Pacman.x + PacmanRadius ) / scalefactorx)]
-                    console.log(lastcorner,[parseInt((Pacman.y + PacmanRadius ) / scalefactory)],[parseInt((Pacman.x + PacmanRadius ) / scalefactorx)])
+                    console.log(lastcorner,[parseInt((Pacman.y+oneymove + PacmanRadius ) / scalefactory)][parseInt((Pacman.x +onexmove+ PacmanRadius ) / scalefactorx)])
+                    }
+                    else{ lastcorner=null; break}
                     
                 }
-                lastcorner=0
-                    
+                
+   
             }
             if (timeElapsed > PacManMouthRate_MSec) {
                 if (PacManSkinItrate == 3)
