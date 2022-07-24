@@ -66,6 +66,7 @@
         PacManDown = []
         colorline = []
         Coll2DMapArray = []
+        PacmanGraphPosition=0
         //448 *576
         var changeXmove = 0, chagneYmove = 0, chagnePacManDirc = "ArrowRight"
         const s = PIXI.Loader.shared.add("Gamemap", "/assets/Map/map.png")
@@ -81,7 +82,7 @@
             .add("PacmanDown_1", "./assets/Pacman/pacman-down/1.png")
             .add("PacmanDown_2", "./assets/Pacman/pacman-down/2.png")
             .add("PacmanDown_3", "./assets/Pacman/pacman-down/3.png")
-            .add("CollusionMap", "./assets/Map/CollusionMap.png")
+            .add("CollusionMap", "./assets/Map/CollusionMap2.png")
 
         function resize() {
             console.log("resize")
@@ -199,49 +200,55 @@
 
         function gameLoop(delta) {
             timeElapsed += delta
-            //console.log(   Coll2DMapArray[parseInt((Pacman.y+PacmanRadius)/ scalefactory)][parseInt((Pacman.x+PacmanRadius)/scalefactorx)])
+            current_pos=Coll2DMapArray[parseInt(((Pacman.y+PacmanRadius)/ scalefactory))][parseInt(((Pacman.x+PacmanRadius)/scalefactorx))]
+            if (current_pos!=8){
+                console.log(current_pos)
+                PacmanGraphPosition=current_pos
+            }
             // check if can change direction or go in same dir 
             if (chagneYmove != ymove || changeXmove != xmove) {
-                console.log("aya")
+              //  console.log("aya")
 
                 oneymove= Math.sign(chagneYmove)
                 onexmove=Math.sign(changeXmove)
                 for(i=1;i<=parseInt((Pacman.width)/2);i++){
                 let can_go = Coll2DMapArray[parseInt((Pacman.y + PacmanRadius + (oneymove * i)) / scalefactory)][parseInt((Pacman.x + PacmanRadius + (onexmove *i)) / scalefactorx)]
+                
                 if (i==parseInt((Pacman.width)/2) ) {
                     xmove = changeXmove 
                     ymove = chagneYmove
                     chagnePacManDirc = PacManDirc
-                    console.log("1",[parseInt((Pacman.y + PacmanRadius + (chagneYmove * i)) / scalefactory)],[parseInt((Pacman.x + PacmanRadius + (changeXmove * i)) / scalefactorx)],xmove,ymove,i)
+                    //console.log("1",[parseInt((Pacman.y + PacmanRadius + (chagneYmove * i)) / scalefactory)],[parseInt((Pacman.x + PacmanRadius + (changeXmove * i)) / scalefactorx)],xmove,ymove,i)
                     
                 }
                 if(can_go==0){
-                    console.log("2",[parseInt((Pacman.y + PacmanRadius + (chagneYmove * i)) / scalefactory)],[parseInt((Pacman.x + PacmanRadius + (changeXmove * i)) / scalefactorx)],xmove,ymove,i)
-
+                    //console.log("2",[parseInt((Pacman.y + PacmanRadius + (chagneYmove * i)) / scalefactory)],[parseInt((Pacman.x + PacmanRadius + (changeXmove * i)) / scalefactorx)],xmove,ymove,i)
+                    
                     break
                 }
             }
             }
+            
             pacmanWay = Coll2DMapArray[parseInt((Pacman.y + PacmanRadius + (ymove)) / scalefactory)][parseInt((Pacman.x + PacmanRadius + (xmove)) / scalefactorx)]
-
+        
             if (pacmanWay != 0) {
                 //console.log(Pacman.x, Pacman.y)
                 Pacman.x += xmove
                 Pacman.y += ymove
             }
             else {
-                console.log(xmove,ymove)
+              //  console.log(xmove,ymove)
 
                 oneymove= Math.sign(ymove) 
                 onexmove=Math.sign(xmove) 
-                console.log(onexmove,oneymove)
+              //  console.log(onexmove,oneymove)
 
                 while (lastcorner!=0 && lastcorner<16) {
                     lastcorner = Coll2DMapArray[parseInt((Pacman.y+oneymove + PacmanRadius ) / scalefactory)][parseInt((Pacman.x +onexmove+ PacmanRadius ) / scalefactorx)]
                     if (lastcorner!=0){
                     Pacman.x += onexmove
                     Pacman.y += oneymove
-                    console.log(lastcorner,[parseInt((Pacman.y+oneymove + PacmanRadius ) / scalefactory)][parseInt((Pacman.x +onexmove+ PacmanRadius ) / scalefactorx)])
+                  //  console.log(lastcorner,[parseInt((Pacman.y+oneymove + PacmanRadius ) / scalefactory)][parseInt((Pacman.x +onexmove+ PacmanRadius ) / scalefactorx)])
                     }
                     else{ lastcorner=null; break}
                     
