@@ -2,7 +2,7 @@
 Applied Shortest path algorithm on Enemy to catch Pacman 
 
 ### What is PacMan
-
+Pac-Man is a Japanese video game franchise created by Toru Iwatani, the father of Pac-Man, but published, developed and owned by Bandai Namco Entertainment. Entries have been developed by a wide array of other video game companies, including Midway Games, Atari and Mass Media
 ### How To Play
 The player controls Pac-Man, who must eat all the dots inside an enclosed maze while avoiding four colored ghosts. Eating large flashing dots called "Power Pellets" causes the ghosts to temporarily turn blue, allowing Pac-Man to eat them for bonus points
 
