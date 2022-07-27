@@ -9,9 +9,11 @@ graph={'A':{'B':3,'C':1},'B':{'C':7,'E':1,'A':3},'C':{'B':7,'D':2,'A':1},'D':{'B
 Start_vertex='A'
 visited=[Start_vertex]
 shortest_path={}
+shortest_path_way={}
 Object.keys(graph).forEach(vertex => {
   shortest_path[vertex]=Infinity
 });
+
 shortest_path[Start_vertex]=0
 
 function shortest_algo(vertex,cost){
@@ -24,6 +26,7 @@ function shortest_algo(vertex,cost){
     console.log("c",graph[vertex][neighbour],neighbour,visited)
     if(cost+graph[vertex][neighbour]<shortest_path[neighbour]){
       shortest_path[neighbour]=cost+graph[vertex][neighbour]
+      shortest_path_way[neighbour]=vertex
     }
     if(current_cost>shortest_path[neighbour]){
       current_cost=shortest_path[neighbour]
@@ -38,4 +41,4 @@ function shortest_algo(vertex,cost){
 }
 
 shortest_algo(Start_vertex,shortest_path[Start_vertex])
-
+console.log(shortest_path_way)
