@@ -24,8 +24,7 @@ All the contiributions are welcome
 ## Credits
 
 https://en.wikipedia.org/wiki/List_of_Pac-Man_video_games
-https://en.wikipedia.org/wiki/Pac-Man#:~:text=The%20player%20controls%20Pac%2DMan,eat%20them%20for%20bonus%20points.
-
+https://en.wikipedia.org/wiki/Pac-Man
 ## License
 (MIT, Apache etc)
 
