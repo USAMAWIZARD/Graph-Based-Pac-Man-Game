@@ -8,6 +8,8 @@
     <title>Document</title>
     <script src="./js/pixi.min.js"></script>
     <script src="./js/bump.js"></script>
+    <script src="./Path Finding Algorithms/pacmangraph.js"></script>
+    <script src="./Path Finding Algorithms/Dijkstra's_shortest_path.js"></script>
     <style>
         html {
             overflow: scroll;
@@ -202,7 +204,7 @@
             timeElapsed += delta
             current_pos=Coll2DMapArray[parseInt(((Pacman.y+PacmanRadius)/ scalefactory))][parseInt(((Pacman.x+PacmanRadius)/scalefactorx))]
             if (current_pos!=8 && current_pos!=undefined) {
-                //  console.log(current_pos)
+                // console.log(current_pos)
                 PacmanGraphPosition=current_pos
             }
             // check if can change direction or go in same dir 

@@ -5,7 +5,7 @@
 //             \  /         \ \         
 //              C ----2------ D  
 
-graph={'A':{'B':3,'C':1},'B':{'C':7,'E':1,'A':3},'C':{'B':7,'D':2,'A':1},'D':{'B':5,'C':2,'E':7},'E':{'B':1,'D':7}}
+//graph={'A':{'B':3,'C':1},'B':{'C':7,'E':1,'A':3},'C':{'B':7,'D':2,'A':1},'D':{'B':5,'C':2,'E':7},'E':{'B':1,'D':7}}
 Start_vertex='A'
 visited=[Start_vertex]
 shortest_path={}
@@ -41,4 +41,4 @@ function shortest_algo(vertex,cost){
 }
 
 shortest_algo(Start_vertex,shortest_path[Start_vertex])
-console.log(shortest_path_way)
+//console.log(shortest_path_way)
