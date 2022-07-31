@@ -39,6 +39,5 @@ function shortest_algo(vertex,cost){
   visited.push(current_vertex)
  shortest_algo(current_vertex,  shortest_path[current_vertex]  )
 }
-
-shortest_algo(Start_vertex,shortest_path[Start_vertex])
+//shortest_algo(Start_vertex,shortest_path[Start_vertex])
 //console.log(shortest_path_way)

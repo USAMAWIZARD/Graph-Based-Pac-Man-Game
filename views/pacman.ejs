@@ -58,17 +58,19 @@
         PacManRight = []
         PacManLeft = []
         var PixelData, collpixels
-        PacManSpeed =  window.innerWidth / 500
+        PacManSpeed = window.innerWidth / 500
         PacManMouthRate_MSec = 10
         xmove = 0
         ymove = 0
         PacManUp = []
-        lastcorner=null
+        lastcorner = null
         var PacManSpriteObj = null
         PacManDown = []
         colorline = []
         Coll2DMapArray = []
-        PacmanGraphPosition=0
+        PacmanGraphPosition = 0
+        pac_current_pos = undefined
+        pac_new_position = undefined
         //448 *576
         var changeXmove = 0, chagneYmove = 0, chagnePacManDirc = "ArrowRight"
         const s = PIXI.Loader.shared.add("Gamemap", "/assets/Map/map.png")
@@ -84,6 +86,7 @@
             .add("PacmanDown_1", "./assets/Pacman/pacman-down/1.png")
             .add("PacmanDown_2", "./assets/Pacman/pacman-down/2.png")
             .add("PacmanDown_3", "./assets/Pacman/pacman-down/3.png")
+            .add("Enemy_blinky", "./assets/Enemy-Bot/blinky.png")
             .add("CollusionMap", "./assets/Map/CollusionMap2.png")
 
         function resize() {
@@ -94,7 +97,11 @@
 
             Pacman.position.set(
                 (GameMap.texture.width - 27) * scalefactorx / 2,
-                (GameMap.texture.height + 243) * scalefactory / 2
+                (GameMap.texture.height + 240) * scalefactory / 2
+            );
+            Enemy_blinky.position.set(
+                (GameMap.texture.width - 27) * scalefactorx / 2,
+                (GameMap.texture.height - 148) * scalefactory / 2
             );
         }
 
@@ -106,6 +113,8 @@
             scalefactory = parseFloat(scalefactory.toFixed(2));
             Pacman = new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanRight_1.texture)
             CollusionMap = new PIXI.Sprite(PIXI.Loader.shared.resources.CollusionMap.texture)
+            Enemy_blinky = new PIXI.Sprite(PIXI.Loader.shared.resources.Enemy_blinky.texture);
+
             PacManRight.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanRight_1.texture));
             PacManRight.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanRight_2.texture));
             PacManRight.push(new PIXI.Sprite(PIXI.Loader.shared.resources.PacmanRight_3.texture));
@@ -125,14 +134,21 @@
             GameMap.scale.y *= scalefactory
             CollusionMap.scale.x *= scalefactorx
             CollusionMap.scale.y *= scalefactory
-
             GameContainer.addChild(CollusionMap)
+
+            Enemy_blinky.scale.x *= scalefactorx * 2
+            Enemy_blinky.scale.y *= scalefactory * 2
+            Enemy_blinkyRadius = Enemy_blinky.width / 2
+
+            Enemy_saved_state = Enemy_blinky
+
             Object.values(PacManSpriteObj).forEach((eachSpriteArray) => {
                 eachSpriteArray.forEach((eachSprite) => {
                     eachSprite.scale.x *= scalefactorx * 2
                     eachSprite.scale.y *= scalefactory * 2
                     eachSprite.x = 100
                     eachSprite.y = 700
+                    
                 })
             })
 
@@ -149,13 +165,9 @@
             GameMap.y = 0
 
             GameContainer.addChild(GameMap)
-
-
             PacmanRadius = Pacman.width / 2
-            // Pacman.anchor.set(12, 10.9);
             GameContainer.addChild(Pacman)
-            // app.stage.addChild(gr)
-
+            GameContainer.addChild(Enemy_blinky)
             app.stage.addChild(GameContainer)
 
             resize();
@@ -196,80 +208,109 @@
 
 
         let graphic = new PIXI.Graphics();
-        let xp = 0, yp = 0
         timeElapsed = 0
         PacManSkinItrate = 0
+        Pac_Move = false
 
+        enemey_xmove=0
+        enemey_ymove=0
         function gameLoop(delta) {
             timeElapsed += delta
-            current_pos=Coll2DMapArray[parseInt(((Pacman.y+PacmanRadius)/ scalefactory))][parseInt(((Pacman.x+PacmanRadius)/scalefactorx))]
-            if (current_pos!=8 && current_pos!=undefined) {
-                // console.log(current_pos)
-                PacmanGraphPosition=current_pos
+            if (Pac_Move) {
+                Enemy_saved_state = Pacman
+                enemey_xmove=xmove
+                enemey_ymove=ymove
+                Pacman = Pacman_saved_state             //pacman move
+                sprite_radius = PacmanRadius
+                xmove=pacman_xmove
+                ymove=pacman_ymove
+            }
+            else {
+                Pacman_saved_state = Pacman
+                pacman_xmove = xmove
+                pacman_ymove =ymove
+                Pacman = Enemy_saved_state              //move enemy
+               // sprite_radius = Enemy_blinkyRadius
+               sprite_radius = PacmanRadius
+
+                xmove=enemey_xmove
+                ymove=enemey_ymove
+            }
+            console.log(Pacman.x,Pacman.y)
+            pac_current_pos = Coll2DMapArray[parseInt(((Pacman.y + sprite_radius) / scalefactory))][parseInt(((Pacman.x + sprite_radius) / scalefactorx))]
+            if (pac_current_pos != 8 && pac_current_pos != undefined && pac_current_pos != pac_new_position) {
+                console.log(pac_current_pos)
+                PacmanGraphPosition = pac_current_pos
+                pac_new_position = pac_current_pos
+                //shortest_algo(Start_vertex,shortest_path[Start_vertex])
+                //console.log(shortest_path_way)
             }
             // check if can change direction or go in same dir 
             if (chagneYmove != ymove || changeXmove != xmove) {
-              //  console.log("aya")
+                //  console.log("aya")
 
-                oneymove= Math.sign(chagneYmove)
-                onexmove=Math.sign(changeXmove)
-                for(i=1;i<=parseInt((Pacman.width)/2);i++){
-                let can_go = Coll2DMapArray[parseInt((Pacman.y + PacmanRadius + (oneymove * i)) / scalefactory)][parseInt((Pacman.x + PacmanRadius + (onexmove *i)) / scalefactorx)]
-                
-                if (i==parseInt((Pacman.width)/2) ) {
-                    xmove = changeXmove 
-                    ymove = chagneYmove
-                    chagnePacManDirc = PacManDirc
-                    //console.log("1",[parseInt((Pacman.y + PacmanRadius + (chagneYmove * i)) / scalefactory)],[parseInt((Pacman.x + PacmanRadius + (changeXmove * i)) / scalefactorx)],xmove,ymove,i)
-                    
-                }
-                if(can_go==0){
-                    //console.log("2",[parseInt((Pacman.y + PacmanRadius + (chagneYmove * i)) / scalefactory)],[parseInt((Pacman.x + PacmanRadius + (changeXmove * i)) / scalefactorx)],xmove,ymove,i)
-                    
-                    break
+                oneymove = Math.sign(chagneYmove)
+                onexmove = Math.sign(changeXmove)
+                for (i = 1; i <= parseInt(sprite_radius); i++) {
+                    let can_go = Coll2DMapArray[parseInt((Pacman.y + sprite_radius + (oneymove * i)) / scalefactory)][parseInt((Pacman.x + sprite_radius + (onexmove * i)) / scalefactorx)]
+
+                    if (i == parseInt(sprite_radius)) {
+                        xmove = changeXmove
+                        ymove = chagneYmove
+                        if(Pac_Move)
+                        chagnePacManDirc = PacManDirc
+                        //console.log("1",[parseInt((Pacman.y + sprite_radius + (chagneYmove * i)) / scalefactory)],[parseInt((Pacman.x + sprite_radius + (changeXmove * i)) / scalefactorx)],xmove,ymove,i)
+
+                    }
+                    if (can_go == 0) {
+                        //console.log("2",[parseInt((Pacman.y + sprite_radius + (chagneYmove * i)) / scalefactory)],[parseInt((Pacman.x + sprite_radius + (changeXmove * i)) / scalefactorx)],xmove,ymove,i)
+
+                        break
+                    }
                 }
             }
-            }
-            
-            pacmanWay = Coll2DMapArray[parseInt((Pacman.y + PacmanRadius + (ymove)) / scalefactory)][parseInt((Pacman.x + PacmanRadius + (xmove)) / scalefactorx)]
-        
+
+            pacmanWay = Coll2DMapArray[parseInt((Pacman.y + sprite_radius + (ymove)) / scalefactory)][parseInt((Pacman.x + sprite_radius + (xmove)) / scalefactorx)]
+
             if (pacmanWay != 0) {
                 //console.log(Pacman.x, Pacman.y)
                 Pacman.x += xmove
                 Pacman.y += ymove
             }
             else {
-              //  console.log(xmove,ymove)
+                //  console.log(xmove,ymove)
 
-                oneymove= Math.sign(ymove) 
-                onexmove=Math.sign(xmove) 
-              //  console.log(onexmove,oneymove)
+                oneymove = Math.sign(ymove)
+                onexmove = Math.sign(xmove)
+                //  console.log(onexmove,oneymove)
 
-                while (lastcorner!=0 && lastcorner<16) {
-                    lastcorner = Coll2DMapArray[parseInt((Pacman.y+oneymove + PacmanRadius ) / scalefactory)][parseInt((Pacman.x +onexmove+ PacmanRadius ) / scalefactorx)]
-                    if (lastcorner!=0){
-                    Pacman.x += onexmove
-                    Pacman.y += oneymove
-                  //  console.log(lastcorner,[parseInt((Pacman.y+oneymove + PacmanRadius ) / scalefactory)][parseInt((Pacman.x +onexmove+ PacmanRadius ) / scalefactorx)])
+                while (lastcorner != 0 && lastcorner < 16) {
+                    lastcorner = Coll2DMapArray[parseInt((Pacman.y + oneymove + sprite_radius) / scalefactory)][parseInt((Pacman.x + onexmove + sprite_radius) / scalefactorx)]
+                    if (lastcorner != 0) {
+                        Pacman.x += onexmove
+                        Pacman.y += oneymove
+                        //  console.log(lastcorner,[parseInt((Pacman.y+oneymove + sprite_radius ) / scalefactory)][parseInt((Pacman.x +onexmove+ sprite_radius ) / scalefactorx)])
                     }
-                    else{ lastcorner=null; break}
-                    
+                    else { lastcorner = null; break }
+
                 }
-                
-   
-            }
-            if (timeElapsed > PacManMouthRate_MSec) {
-                if (PacManSkinItrate == 3)
-                    PacManSkinItrate = 0
-                Pacman.texture = PacManSpriteObj[chagnePacManDirc][PacManSkinItrate].texture
-                PacManSkinItrate += 1
-                timeElapsed = 0
-            }
 
-            graphic.beginFill(0xffffff);
-            graphic.drawCircle(Pacman.x + Pacman.width / 2, Pacman.y + Pacman.width / 2, 2);
-            graphic.endFill();
 
+            }
+            if (Pac_Move) {
+                if (timeElapsed > PacManMouthRate_MSec) {
+                    if (PacManSkinItrate == 3)
+                        PacManSkinItrate = 0
+                    Pacman.texture = PacManSpriteObj[chagnePacManDirc][PacManSkinItrate].texture
+                    PacManSkinItrate += 1
+                    timeElapsed = 0
+                }
+
+                graphic.beginFill(0xffffff);
+                graphic.drawCircle(Pacman.x + Pacman.width / 2, Pacman.y + Pacman.width / 2, 2);
+                graphic.endFill();
+            }
+            Pac_Move=!Pac_Move
         }
 
 
