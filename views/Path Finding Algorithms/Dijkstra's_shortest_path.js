@@ -5,10 +5,10 @@
                           //             \  /         \ \         
                           //              C ----1------ D  
 
-require('../Path Finding Algorithms/pacmangraph.js')
+//require('../Path Finding Algorithms/pacmangraph.js')
 //graph={'A':{'B':1,'C':9},'B':{'C':2,'E':3,'A':1,'D':1},'C':{'B':2,'D':1,'A':9},'D':{'B':1,'C':1,'E':7},'E':{'B':3,'D':7,'L':3},'L':{'E':3}}
 function init(pac_position){
-console.log(graph)
+//console.log(graph)
 Start_vertex=pac_position
 visited=[Start_vertex]
 shortest_path={}
@@ -21,14 +21,14 @@ shortest_path[Start_vertex]=0
 
 function shortest_algo(vertex,cost){
   diff = Object.keys(graph).filter(function(x) { return visited.indexOf(x) < 0 })
-  if(diff.length==0){console.log("all visited");return}
+  if(diff.length==0){return}
   neighbours= Object.keys(graph[vertex]).filter(function(x) { return visited.indexOf(x) < 0 })
   if(neighbours.length==0){return}
   current_cost=Infinity
-  console.log("neighbours",neighbours)
+ // console.log("neighbours",neighbours)
   neighbours.forEach(neighbour=>{
     if (!visited.includes(neighbour)){
-    console.log("c",graph[vertex][neighbour],neighbour,visited)
+    //console.log("c",graph[vertex][neighbour],neighbour,visited)
     if(cost+graph[vertex][neighbour]<shortest_path[neighbour]){
       shortest_path[neighbour]=cost+graph[vertex][neighbour]
       shortest_path_way[neighbour]=vertex
@@ -40,11 +40,11 @@ function shortest_algo(vertex,cost){
     }
   })
   //console.log(shortest_path,current_vertex)
-  console.log("visited",current_vertex)
+  //console.log("visited",current_vertex)
   visited.push(current_vertex)
  shortest_algo(current_vertex,  shortest_path[current_vertex] )
  neighbours= Object.keys(graph[vertex]).filter(function(x) { return visited.indexOf(x) < 0 })
- console.log("backtrack",neighbours.length,vertex)
+ //console.log("backtrack",neighbours.length,vertex)
  if(neighbours.length!=0){
   neighbours.forEach(neighbour=>{
   shortest_algo(neighbour,  shortest_path[neighbour] )
@@ -55,4 +55,4 @@ function shortest_algo(vertex,cost){
 }
 init('0')
 shortest_algo(Start_vertex,shortest_path[Start_vertex])
-console.log("shortest :",shortest_path_way)
+//console.log("shortest :",shortest_path_way)

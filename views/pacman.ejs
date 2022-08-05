@@ -69,10 +69,11 @@
         colorline = []
         Coll2DMapArray = []
         PacmanGraphPosition = 0
-        pac_current_pos = undefined
+        game_Char_Position = undefined
         pac_new_position = undefined
+        enemy_new_position = undefined
         //448 *576
-        var changeXmove = 0, chagneYmove = 0, chagnePacManDirc = "ArrowRight"
+        var changeXmove = 0,changeYmove = 0,changePacManDirc  = "ArrowRight"
         const s = PIXI.Loader.shared.add("Gamemap", "/assets/Map/map.png")
             .add("PacmanRight_1", "./assets/Pacman/pacman-right/1.png")
             .add("PacmanRight_2", "./assets/Pacman/pacman-right/2.png")
@@ -141,14 +142,15 @@
             Enemy_blinkyRadius = Enemy_blinky.width / 2
 
             Enemy_saved_state = Enemy_blinky
-
+            pac_dir_changed=false
+            enemy_dir_changed=false
             Object.values(PacManSpriteObj).forEach((eachSpriteArray) => {
                 eachSpriteArray.forEach((eachSprite) => {
                     eachSprite.scale.x *= scalefactorx * 2
                     eachSprite.scale.y *= scalefactory * 2
                     eachSprite.x = 100
                     eachSprite.y = 700
-                    
+
                 })
             })
 
@@ -173,97 +175,128 @@
             resize();
             app.stage.addChild(graphic);
             app.ticker.add(gameLoop)
-            document.body.onkeydown = (key => {
-                if (Object.keys(PacManSpriteObj).includes(key.code)) {
-                    PacManDirc = key.code
-                    switch (PacManDirc) {
-                        case "ArrowUp":
-                            chagneYmove = -PacManSpeed
-                            changeXmove = 0
-                            break
-                        case "ArrowDown":
-                            chagneYmove = PacManSpeed
-                            changeXmove = 0
-                            break
-                        case "ArrowRight":
-                            changeXmove = PacManSpeed
-                            chagneYmove = 0
-                            break
-                        case "ArrowLeft":
-                            changeXmove = -PacManSpeed
-                            chagneYmove = 0
-                            break
-                    }
 
-                }
-            })
 
         })
-        function pixel(mysprite, x, y) {
-            var pixels = app.renderer.extract.pixels(mysprite);
-            var index = (y * mysprite.width + x) * 4;
+        document.body.onkeydown = function changeDirection(key,Enemy_Dir_change) {
+            if (Object.keys(PacManSpriteObj).includes(key.code)) {
+                PacManDirc = key.code
+                switch (PacManDirc) {
+                    case "ArrowUp":
+                       y_change = -PacManSpeed
+                        x_change = 0
+                        break
+                    case "ArrowDown":
+                       y_change = PacManSpeed
+                        x_change = 0
+                        break
+                    case "ArrowRight":
+                        x_change = PacManSpeed
+                       y_change = 0
+                        break
+                    case "ArrowLeft":
+                        x_change = -PacManSpeed
+                       y_change = 0
+                        break
+                }
+                if(Enemy_Dir_change ==undefined){
+                    pac_dir_changed=true
+                    pac_new_dir_x=x_change
+                    pac_new_dir_y=y_change
+                }
 
-            return [pixels[index], pixels[index + 1], pixels[index + 2], pixels[index + 3]]
+            }
+            
         }
-
-
         let graphic = new PIXI.Graphics();
         timeElapsed = 0
         PacManSkinItrate = 0
         Pac_Move = false
 
-        enemey_xmove=0
-        enemey_ymove=0
+        enemey_xmove = Math.abs(PacManSpeed)
+        enemey_ymove = 0
+
+
         function gameLoop(delta) {
             timeElapsed += delta
             if (Pac_Move) {
                 Enemy_saved_state = Pacman
-                enemey_xmove=xmove
-                enemey_ymove=ymove
+                enemey_xmove = xmove
+                enemey_ymove = ymove
                 Pacman = Pacman_saved_state             //pacman move
                 sprite_radius = PacmanRadius
-                xmove=pacman_xmove
-                ymove=pacman_ymove
+                xmove = pacman_xmove
+                ymove = pacman_ymove
+
             }
             else {
                 Pacman_saved_state = Pacman
                 pacman_xmove = xmove
-                pacman_ymove =ymove
+                pacman_ymove = ymove
                 Pacman = Enemy_saved_state              //move enemy
-               // sprite_radius = Enemy_blinkyRadius
-               sprite_radius = PacmanRadius
+                // sprite_radius = Enemy_blinkyRadius
+                sprite_radius = PacmanRadius
+                xmove = enemey_xmove
+                ymove = enemey_ymove
 
-                xmove=enemey_xmove
-                ymove=enemey_ymove
             }
-            console.log(Pacman.x,Pacman.y)
-            pac_current_pos = Coll2DMapArray[parseInt(((Pacman.y + sprite_radius) / scalefactory))][parseInt(((Pacman.x + sprite_radius) / scalefactorx))]
-            if (pac_current_pos != 8 && pac_current_pos != undefined && pac_current_pos != pac_new_position) {
-                console.log(pac_current_pos)
-                PacmanGraphPosition = pac_current_pos
-                pac_new_position = pac_current_pos
-                //shortest_algo(Start_vertex,shortest_path[Start_vertex])
-                //console.log(shortest_path_way)
+            game_Char_Position = Coll2DMapArray[parseInt(((Pacman.y + sprite_radius) / scalefactory))][parseInt(((Pacman.x + sprite_radius) / scalefactorx))]
+            if (game_Char_Position != 8 && game_Char_Position != undefined   ) {
+                // console.log(game_Char_Position)
+                if (Pac_Move && game_Char_Position != pac_new_position){
+                    pac_new_position = game_Char_Position
+                    if (enemy_new_position != undefined && pac_new_position != undefined) {
+                        init(pac_new_position)
+                        shortest_algo(pac_new_position, shortest_path[pac_new_position])
+                        
+                       console.log(shortest_path_way)
+                    }             
+                }
+                 if(!Pac_Move && game_Char_Position !=  enemy_new_position) {
+                    enemy_new_position = game_Char_Position
+                    if (enemy_new_position != undefined && pac_new_position != undefined) {
+                        init(pac_new_position)
+                        shortest_algo(pac_new_position, shortest_path[pac_new_position])
+                        
+                       console.log(shortest_path_way)
+                    }   
+                }
             }
             // check if can change direction or go in same dir 
-            if (chagneYmove != ymove || changeXmove != xmove) {
-                //  console.log("aya")
 
-                oneymove = Math.sign(chagneYmove)
+            if (pac_dir_changed || enemy_dir_changed) {
+                //  console.log("aya")
+                if (pac_dir_changed){
+                    changeXmove=pac_new_dir_x
+                    changeYmove=pac_new_dir_y
+                }
+                else{
+                    changeXmove=enemy_new_dir_x
+                    changeYmove=enemy_new_dir_y
+                }
+                oneymove = Math.sign(changeYmove)
                 onexmove = Math.sign(changeXmove)
                 for (i = 1; i <= parseInt(sprite_radius); i++) {
                     let can_go = Coll2DMapArray[parseInt((Pacman.y + sprite_radius + (oneymove * i)) / scalefactory)][parseInt((Pacman.x + sprite_radius + (onexmove * i)) / scalefactorx)]
 
                     if (i == parseInt(sprite_radius)) {
+                        if(Pac_Move && pac_dir_changed){
                         xmove = changeXmove
-                        ymove = chagneYmove
-                        if(Pac_Move)
-                        chagnePacManDirc = PacManDirc
-                        //console.log("1",[parseInt((Pacman.y + sprite_radius + (chagneYmove * i)) / scalefactory)],[parseInt((Pacman.x + sprite_radius + (changeXmove * i)) / scalefactorx)],xmove,ymove,i)
+                        ymove = changeYmove
+                        changePacManDirc = PacManDirc
+                        pac_dir_changed=false
+                        }
+                        if(!Pac_Move && enemy_dir_changed ){
+                        xmove = changeXmove
+                        ymove = changeYmove
+                        changePacManDirc = PacManDirc
+                        enemy_dir_changed=false
+                        }
+                        //console.log("1",[parseInt((Pacman.y + sprite_radius + (changeYmove * i)) / scalefactory)],[parseInt((Pacman.x + sprite_radius + (changeXmove * i)) / scalefactorx)],xmove,ymove,i)
 
                     }
                     if (can_go == 0) {
-                        //console.log("2",[parseInt((Pacman.y + sprite_radius + (chagneYmove * i)) / scalefactory)],[parseInt((Pacman.x + sprite_radius + (changeXmove * i)) / scalefactorx)],xmove,ymove,i)
+                        //console.log("2",[parseInt((Pacman.y + sprite_radius + (changeYmove * i)) / scalefactory)],[parseInt((Pacman.x + sprite_radius + (changeXmove * i)) / scalefactorx)],xmove,ymove,i)
 
                         break
                     }
@@ -295,22 +328,17 @@
 
                 }
 
-
             }
             if (Pac_Move) {
                 if (timeElapsed > PacManMouthRate_MSec) {
                     if (PacManSkinItrate == 3)
                         PacManSkinItrate = 0
-                    Pacman.texture = PacManSpriteObj[chagnePacManDirc][PacManSkinItrate].texture
+                    Pacman.texture = PacManSpriteObj[changePacManDirc][PacManSkinItrate].texture
                     PacManSkinItrate += 1
                     timeElapsed = 0
                 }
-
-                graphic.beginFill(0xffffff);
-                graphic.drawCircle(Pacman.x + Pacman.width / 2, Pacman.y + Pacman.width / 2, 2);
-                graphic.endFill();
             }
-            Pac_Move=!Pac_Move
+            Pac_Move = !Pac_Move
         }
 
 
