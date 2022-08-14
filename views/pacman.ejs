@@ -88,7 +88,7 @@
             .add("PacmanDown_2", "./assets/Pacman/pacman-down/2.png")
             .add("PacmanDown_3", "./assets/Pacman/pacman-down/3.png")
             .add("Enemy_blinky", "./assets/Enemy-Bot/blinky.png")
-            .add("CollusionMap", "./assets/Map/CollusionMap2.png")
+            .add("CollusionMap", "./assets/Map/CollusionMap3.png")
 
         function resize() {
             console.log("resize")
@@ -248,19 +248,22 @@
 
             }
             game_Char_Position = Coll2DMapArray[parseInt(((Pacman.y + sprite_radius) / scalefactory))][parseInt(((Pacman.x + sprite_radius) / scalefactorx))]
-            if (game_Char_Position != 8 && game_Char_Position != undefined   ) {
-                // console.log(game_Char_Position)
+            //console.log(game_Char_Position)
+            if (game_Char_Position != 251 && game_Char_Position != undefined   ) {
                 if (Pac_Move && game_Char_Position != pac_new_position){
+                    console.log("p",game_Char_Position)
+
                     pac_new_position = game_Char_Position.toString()
                 }
                  if(!Pac_Move && game_Char_Position !=  enemy_new_position) {
+                   // console.log("e",game_Char_Position,parseInt(((Pacman.y + sprite_radius) / scalefactory)),parseInt(((Pacman.x + sprite_radius) / scalefactorx)))
                     enemy_new_position = game_Char_Position.toString()
                     if (enemy_new_position != undefined && pac_new_position != undefined) {
                         init(pac_new_position)
                         shortest_algo(pac_new_position, shortest_path[pac_new_position])
                         moveto=shortest_path_way[enemy_new_position]
                         changeDirection({"code":graph_direction[enemy_new_position][moveto]},1)
-                       console.log(shortest_path_way,graph_direction[enemy_new_position][moveto],pac_new_position,moveto)  
+                       //console.log(shortest_path_way,graph_direction[enemy_new_position][moveto],pac_new_position,moveto)  
                     }   
                 }
             }

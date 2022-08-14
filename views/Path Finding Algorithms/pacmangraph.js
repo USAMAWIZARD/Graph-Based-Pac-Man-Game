@@ -80,18 +80,20 @@ graph = {
 graph_direction = {
     0: { 1: 'ArrowRight', 6: 'ArrowDown' },
     1: { 0: 'ArrowLeft', 2: 'ArrowRight', 7: 'ArrowDown' },
-    2: { 1: 'ArrowRight', 9: 'ArrowDown' },
+    2: { 1: 'ArrowLeft', 9: 'ArrowDown' },
     3: { 4: 'ArrowRight', 10: 'ArrowDown' },
     4: { 3: 'ArrowLeft', 5: 'ArrowRight', 12: 'ArrowDown' },
-    5: { 4: 'ArrowRight', 13: 'ArrowDown' },
-    6: { 0: 'ArrowUp', 7: 'ArrowRight', 14: 'ArrowDown' },
+    5: { 4: 'ArrowLeft', 13: 'ArrowDown' },
+
+    6: { 0: 'ArrowUp', 7: 'ArrowRight', 14: 'Arr    owDown' },
     7: { 1: 'ArrowUp', 6: 'ArrowLeft', 8: 'ArrowRight', 15: 'ArrowDown' },
     8: { 7: 'ArrowRight', 9: 'ArrowLeft', 16: 'ArrowDown' },
     9: { 2: 'ArrowUp', 8: 'ArrowLeft', 10: 'ArrowRight' },
-    10: { 3: 'ArrowUp', 9: 'ArrowRight', 11: 'ArrowLeft' },
+    10: { 3: 'ArrowUp', 9: 'ArrowLeft', 11: 'ArrowRight' },
     11: { 10: 'ArrowLeft', 12: 'ArrowRight', 19: 'ArrowDown' },
     12: { 4: 'ArrowUp', 11: 'ArrowLeft', 13: 'ArrowRight', 20: 'ArrowDown' },
-    13: { 5: 'ArrowUp', 12: 'ArrowRight', 21: 'ArrowDown' },
+    13: { 5: 'ArrowUp', 12: 'ArrowLeft', 21: 'ArrowDown' },
+    
     14: { 15: 'ArrowRight', 6: 'ArrowUp' },
     15: { 7: 'ArrowUp', 14: 'ArrowLeft', 22: 'ArrowDown' },
     16: { 17: 'ArrowRight', 8: 'ArrowUp' },
@@ -100,12 +102,14 @@ graph_direction = {
     19: { 11: 'ArrowUp', 18: 'ArrowLeft' },
     20: { 21: 'ArrowRight', 12: 'ArrowUp', 27: 'ArrowDown' },
     21: { 13: 'ArrowUp', 20: 'ArrowLeft' },
+    
     22: { 15: 'ArrowUp', 30: 'ArrowDown' },
     23: { 24: 'ArrowRight', 31: 'ArrowDown' },
     24: { 23: 'ArrowLeft', 25: 'ArrowRight', 17: 'ArrowUp' },
     25: { 24: 'ArrowLeft', 18: 'ArrowUp', 26: 'ArrowRight' },
     26: { 25: 'ArrowLeft', 32: 'ArrowDown' },
     27: { 20: 'ArrowUp', 33: 'ArrowDown' },
+    
     28: { 35: 'ArrowLeft', 29: 'ArrowRight' },
     29: { 28: 'ArrowLeft', 30: 'ArrowRight' },
     30: { 29: 'ArrowLeft', 31: 'ArrowRight', 22: 'ArrowUp', 36: 'ArrowDown' },
@@ -114,12 +118,14 @@ graph_direction = {
     33: { 27: 'ArrowUp', 32: 'ArrowRight', 34: 'ArrowLeft', 41: 'ArrowDown' },
     34: { 35: 'ArrowRight', 33: 'ArrowLeft' },
     35: { 34: 'ArrowRight', 28: 'ArrowLeft' },
+    
     36: { 30: 'ArrowUp', 43: 'ArrowDown' },
     37: { 31: 'ArrowUp', 44: 'ArrowDown', 38: 'ArrowRight' },
     38: { 39: 'ArrowRight', 37: 'ArrowLeft' },
     39: { 40: 'ArrowRight', 38: 'ArrowLeft' },
     40: { 47: 'ArrowDown', 32: 'ArrowUp', 39: 'ArrowLeft' },
     41: { 48: 'ArrowDown', 33: 'ArrowUp' },
+    
     42: { 43: 'ArrowRight', 50: 'ArrowDown' },
     43: { 52: 'ArrowDown', 36: 'ArrowUp', 42: 'ArrowLeft', 44: 'ArrowRight' },
     44: { 45: 'ArrowRight', 37: 'ArrowUp', 43: 'ArrowLeft' },
@@ -128,6 +134,7 @@ graph_direction = {
     47: { 48: 'ArrowRight', 46: 'ArrowLeft', 40: 'ArrowUp' },
     48: { 57: 'ArrowDown', 41: 'ArrowUp', 49: 'ArrowRight', 47: 'ArrowLeft' },
     49: { 59: 'ArrowDown', 48: 'ArrowLeft' },
+    
     50: { 51: 'ArrowRight', 42: 'ArrowUp' },
     51: { 61: 'ArrowDown', 50: 'ArrowLeft' },
     52: { 62: 'ArrowDown', 53: 'ArrowRight', 43: 'ArrowUp' },
@@ -138,6 +145,7 @@ graph_direction = {
     57: { 67: 'ArrowDown', 48: 'ArrowUp', 56: 'ArrowLeft' },
     58: { 68: 'ArrowDown', 59: 'ArrowRight' },
     59: { 49: 'ArrowUp', 58: 'ArrowLeft' },
+   
     60: { 70: 'ArrowDown', 61: 'ArrowRight' },
     61: { 62: 'ArrowRight', 60: 'ArrowLeft', 51: 'ArrowUp' },
     62: { 52: 'ArrowUp', 61: 'ArrowLeft' },
@@ -148,6 +156,7 @@ graph_direction = {
     67: { 68: 'ArrowRight', 57: 'ArrowUp' },
     68: { 69: 'ArrowRight', 58: 'ArrowUp', 67: 'ArrowLeft'},
     69: { 75: 'ArrowDown', 68: 'ArrowLeft' },
+   
     70: { 60: 'ArrowUp', 71: 'ArrowRight' },
     71: { 70: 'ArrowLeft', 72: 'ArrowRight' },
     72: { 64: 'ArrowUp', 71: 'ArrowLeft', 73: 'ArrowRight' },
