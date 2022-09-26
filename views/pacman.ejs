@@ -256,14 +256,14 @@
                     pac_new_position = game_Char_Position.toString()
                 }
                  if(!Pac_Move && game_Char_Position !=  enemy_new_position) {
-                   // console.log("e",game_Char_Position,parseInt(((Pacman.y + sprite_radius) / scalefactory)),parseInt(((Pacman.x + sprite_radius) / scalefactorx)))
+                    console.log("e",game_Char_Position,parseInt(((Pacman.y + sprite_radius) / scalefactory)),parseInt(((Pacman.x + sprite_radius) / scalefactorx)))
                     enemy_new_position = game_Char_Position.toString()
                     if (enemy_new_position != undefined && pac_new_position != undefined) {
                         init(pac_new_position)
                         shortest_algo(pac_new_position, shortest_path[pac_new_position])
                         moveto=shortest_path_way[enemy_new_position]
                         changeDirection({"code":graph_direction[enemy_new_position][moveto]},1)
-                       //console.log(shortest_path_way,graph_direction[enemy_new_position][moveto],pac_new_position,moveto)  
+                       console.log('e',enemy_new_position,pac_new_position,'p',shortest_path_way,graph_direction[enemy_new_position][moveto],pac_new_position,moveto)  
                     }   
                 }
             }
@@ -309,30 +309,35 @@
 
             pacmanWay = Coll2DMapArray[parseInt((Pacman.y + sprite_radius + (ymove)) / scalefactory)][parseInt((Pacman.x + sprite_radius + (xmove)) / scalefactorx)]
 
-            if (pacmanWay != 0) {
-                //console.log(Pacman.x, Pacman.y)
-                Pacman.x += xmove
-                Pacman.y += ymove
-            }
-            else {
+     if (pacmanWay != 0) {
+        //console.log(Pacman.x, Pacman.y)
+        Pacman.x += xmove
+        Pacman.y += ymove
+    }
+    
                 //  console.log(xmove,ymove)
 
-                oneymove = Math.sign(ymove)
-                onexmove = Math.sign(xmove)
-                //  console.log(onexmove,oneymove)
+       // oneymove = Math.sign(ymove)
+        //onexmove = Math.sign(xmove)
+        //  console.log(onexmove,oneymove)
 
-                while (lastcorner != 0 && lastcorner < 16) {
-                    lastcorner = Coll2DMapArray[parseInt((Pacman.y + oneymove + sprite_radius) / scalefactory)][parseInt((Pacman.x + onexmove + sprite_radius) / scalefactorx)]
-                    if (lastcorner != 0) {
-                        Pacman.x += onexmove
-                        Pacman.y += oneymove
-                        //  console.log(lastcorner,[parseInt((Pacman.y+oneymove + sprite_radius ) / scalefactory)][parseInt((Pacman.x +onexmove+ sprite_radius ) / scalefactorx)])
-                    }
-                    else { lastcorner = null; break }
+        // while (lastcorner != 0 && test_if_wall_ahed >=1) {
+        //     test_if_wall_ahed=PacManSpeed
+        //     nextstep = Coll2DMapArray[parseInt((Pacman.y + oneymove + sprite_radius) / scalefactory)][parseInt((Pacman.x + onexmove + sprite_radius) / scalefactorx)]
+        //     if (nextstep != 251) {
+        //         // Pacman.x += onexmove
+        //         // Pacman.y += oneymove
+        //         //  console.log(lastcorner,[parseInt((Pacman.y+oneymove + sprite_radius ) / scalefactory)][parseInt((Pacman.x +onexmove+ sprite_radius ) / scalefactorx)])
+        //     }
+        //     else { lastcorner = null; break 
+        //     test_if_wall_ahed-=1
+        //     }
+        //     onexmove=test_if_wall_ahed*onexmove
+        //     oneymove=test_if_wall_ahed*oneymove
+        // }
 
-                }
+  
 
-            }
             if (Pac_Move) {
                 if (timeElapsed > PacManMouthRate_MSec) {
                     if (PacManSkinItrate == 3)
